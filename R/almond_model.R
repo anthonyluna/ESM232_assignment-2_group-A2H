@@ -16,19 +16,19 @@ almond_model <- function(clim_data, k1=-0.015 , k2=-0.0046 , k3=-0.07 , k4= 0.00
   df_summarized <- clim_data %>% 
     select(year,month,day,tmin_c,precip) %>% 
     group_by(year,month) %>% 
-    summarize(avg_tmin_c=mean(tmin_c),avg_precip = mean(precip)) %>% 
+    summarize(avg_tmin_c=mean(tmin_c),tot_precip = sum(precip)) %>% 
     ungroup()
   
   df_temp <- df_summarized %>% 
     filter(month==2) %>% 
-    select(-avg_precip,-month)
+    select(-tot_precip,-month)
   
   df_precip <- df_summarized %>% 
     filter(month==1) %>% 
     select(-avg_tmin_c,-month)
   
   df_out <- full_join(df_temp,df_precip) %>% 
-    mutate(yeild = k1*avg_tmin_c+k2*(avg_tmin_c^2)+k3*avg_precip+k4*(avg_precip^2)+intercept) %>% 
+    mutate(yeild = k1*avg_tmin_c+k2*(avg_tmin_c^2)+k3*tot_precip+k4*(tot_precip^2)+intercept) %>% 
     select(year,yeild)
   
   return(df_out)
