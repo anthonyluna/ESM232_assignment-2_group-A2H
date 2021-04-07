@@ -1,0 +1,26 @@
+---
+title: "Assigment 2 - ESM 232 Climate Modeling"
+author: "Anthony Luna, Chen Xing, Atefeh Mohseni"
+date: "4/7/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r library}
+library(tidyverse)
+
+source("./R/almond_model.R")
+```
+
+
+```{r import}
+clim_data <- read_delim(file = "./clim.txt ", delim=" ")
+```
+
+
+```{r calculation}
+yeild_outcomes <- almond_model(clim_data)
+```
+
