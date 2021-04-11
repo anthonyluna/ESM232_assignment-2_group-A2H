@@ -7,8 +7,34 @@ almond_model <- function(clim_data, k1=-0.015 , k2=-0.0046 , k3=-0.07 , k4= 0.00
   ## make this easier, or just do it with ifelse statements
   
   # check clim_data dimensions
-  # check clim_data column names
-  # check clim_data column datatypes
+  no_col <- max(count.fields(clim_data, sep = " "))
+  if (no_col < 10)
+  {
+    print("The input climate data file should have 10 columns")
+  } else {
+    # check clim_data column names
+    file_header <- read.table(clim_data, header=TRUE, sep = " ", dec = ".")
+    file_headers = colnames(file_header)
+    
+    expected_header = list("row_number", "D", "day", "month", "year", "wy", "tmax_c", "tmin_c", "precip", "wyd")
+    
+    check_res <- all.equal(file_headers, expected_headers)
+    
+    if (check_res) {
+      # check clim_data column datatypes
+      summary <- summary.default(file_header)
+      numeric_types = length(summary[which(summary=="numeric")])
+      
+      if (numeric_types < 10){
+        print("There should be at least 10 numeric data type in the input file!")
+      }
+    }
+    else{
+      print("The format of the input file header is not as expected!")
+    }
+  }
+  
+  
   # check coefficients and intercept value
   
   ## End error checking
