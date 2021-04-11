@@ -17,9 +17,7 @@
 
 almond_model <- function(clim_data, k1=-0.015 , k2=-0.0046 , k3=-0.07 , k4= 0.0043, intercept = 0.28 ) {
   ## Error checking
-  ## You can use the library checkmate to
-  ## make this easier, or just do it with ifelse statements 
-  œ
+
   # check clim_data dimensions
   no_col <- max(count.fields(clim_data, sep = " "))
   if (no_col < 10)
