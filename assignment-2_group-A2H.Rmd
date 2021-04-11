@@ -1,35 +1,72 @@
 ---
 title: "Assigment 2 - ESM 232 Climate Modeling"
 author: "Anthony Luna, Chen Xing, Atefeh Mohseni"
-date: "4/8/2021"
+date: "4/7/2021"
 output: html_document
 ---
+
+## Almond conceptual model
+
+The almond model derived from Lobell et al. (2006) is a statistical model 
+calculating annual yield anomaly of almonds in California, which is based on February 
+minimum temperature (Celsius degree) and January accumulated precipitation (mm).
+
+Reference:
+
+Lobell D B, Field C B, Cahill K N, et al. Impacts of future climate change on 
+California perennial crop yields: Model projections with climate and crop 
+uncertainties[J]. *Agricultural and Forest Meteorology*, 2006, **141(2-4)**: 208-218.
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 ```{r library}
 library(tidyverse)
+```
 
+## Load function(s)
+
+Load the almond model function!
+
+The function will process:
+
+- Turn the daily minimum temperature and daily precipitation into monthly
+results
+- Calculate annual almond yield conceptual model
+
+```{r getfunctions}
 source("./R/almond_model.R")
 ```
 
+## Read input data
+
+Read the climate data in a txt format. 
+
+- There is a column containing time information
+- It includes two variables: minimum temperature and precipitation
 
 ```{r import}
-clim_data <- read_delim(file = "./clim.txt ", delim=" ")
+clim_data <- read_delim(file = "./clim.txt", delim=" ")
 ```
 
+## Calculate almond yearly yield anomaly
+
+Use the defined function to calculate almond yield of each year in California 
+(units: ton/acre).
+
+The almond yield equation (Lobell et al. 2006) is:
+
+Y = -0.015* (Tn,2) - 0.0046* (Tn,2)^2 - 0.07* (P1) + 0.0043* (P1)^2 + 0.28
+
+where Y is almond yield anomaly (ton/acre); Tn,2 is February minimum temperature (C); 
+P1 is January precipitation (mm)
+
+The yearly yield results will be returned to **yeild_outcomes**
 
 ```{r calculation}
 yeild_outcomes <- almond_model(clim_data)
-yeild_outcomes
-mode(yeild_outcomes)
 ```
 
-# Reference results:
-2000: 9.59
-
-2001: 159.51
-
-2002: 0.24
+## Plots
 
