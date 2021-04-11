@@ -1,5 +1,19 @@
-#' 
-
+#' Almond Model
+#'
+#' This function computes the annual yield of almonds in California
+#’ based on monthly minimum temperature in February and 
+#' accumulated precipitation in January (Lobell et al. 2006)
+#' @param k1 coefficient for February minimum temperature changes 
+#' @param k2 quadratic term coefficient for February minimum temperature changes
+#' @param k3 coefficient for January Precipitation changes
+#' @param k4 quadratic term coefficient for January Precipitation changes
+#' @author Anthony Luna, Chen Xing, Atefeh Mohseni
+#' @examples almond_model(["1" 1991-06-01 1 6 1991 1992 21.232 14.234 1.56 1])
+#' @return Almonds yield anomaly (ton acre-1)
+#' @references
+#' Lobell D B, Field C B, Cahill K N, et al. Impacts of future climate change on 
+#' California perennial crop yields: Model projections with climate and crop 
+#' uncertainties[J]. Agricultural and Forest Meteorology, 2006, 141(2-4): 208-218.
 
 almond_model <- function(clim_data, k1=-0.015 , k2=-0.0046 , k3=-0.07 , k4= 0.0043, intercept = 0.28 ) {
   ## Error checking
@@ -39,23 +53,38 @@ almond_model <- function(clim_data, k1=-0.015 , k2=-0.0046 , k3=-0.07 , k4= 0.00
   
   ## End error checking
   
+  # Turn the daily minimum temperature into monthly data through monthly average
+  # and calculate monthly accumulated precipitation from daily station
+  # precipitation data
+  
   df_summarized <- clim_data %>% 
     select(year,month,day,tmin_c,precip) %>% 
     group_by(year,month) %>% 
     summarize(avg_tmin_c=mean(tmin_c),tot_precip = sum(precip)) %>% 
     ungroup()
   
+  # Extract the February minimum temperature from the data summary
+  
   df_temp <- df_summarized %>% 
     filter(month==2) %>% 
     select(-tot_precip,-month)
+  
+  # Extract the January precipitation from the data summary
   
   df_precip <- df_summarized %>% 
     filter(month==1) %>% 
     select(-avg_tmin_c,-month)
   
+  # Calculate the almond annual yield from the statistical relationship:
+  # Y = k1*(Tn,2) + k2*(Tn,2)^2 + k3*(P1) + k4*(P1)^2 + intercept
+  # Y: almond yield anomaly (ton/acre); Tn,2: February minimum temperature (C); 
+  # P1: January precipitation (mm)
+  
   df_out <- full_join(df_temp,df_precip) %>% 
     mutate(yeild = k1*avg_tmin_c+k2*(avg_tmin_c^2)+k3*tot_precip+k4*(tot_precip^2)+intercept) %>% 
     select(year,yeild)
+  
+  # return the yield to the main function
   
   return(df_out)
   
