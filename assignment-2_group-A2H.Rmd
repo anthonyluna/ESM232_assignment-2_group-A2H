@@ -16,7 +16,9 @@ minimum temperature (Celsius degree) and January accumulated precipitation (mm).
 
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+
 ```
 ```{r library}
 library(tidyverse)
@@ -112,6 +114,7 @@ ggpubr::ggarrange(tmin_plot,precip_plot,yeild_plot,nrow = 3,align = "v")
 
 # Discussion
 
+A multiple linear regression model based on February minimum temperature and January total precipitation was used to predict annual almond yield anomalies and the contribution of each variable from 1988 to 2010. The figures show that the February minimum temperature reduces almond yield in the range of -0.4 to -0.9, with a relatively strong negative contribution until 2000, but diminishes after 2000. However, for the January precipitation, it produced positive apricot yield anomalies ranging from 0 to 2,000 tons/acre. Considering the effects of each variable and interceptions together, we obtain total annual almond yield anomalies. Total yields were highly correlated with precipitation predictions, with a similar magnitude and variation. Several peaks in the total yield prediction are also identified in the precipitation prediction, such as in 1995, 2005 and 2008. February minimum temperature accounts for only 0.05% of the magnitude of January precipitation. Therefore, total apricot production was dominated by January precipitation rather than the average minimum temperature in February.
 
 
 # References
