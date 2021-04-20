@@ -17,6 +17,7 @@ source(here("R","almond_model.R"))
 source(here("R","npv.R"))
 ```
 
+## Generate Sensitivity Data
 
 ```{r gen-data}
 # define general variables
@@ -40,47 +41,84 @@ sensitivity_data <-
       # add the k2 value as a column to the dataframe
       mutate(k2=.x))
 ```
+## Translate to NPV
 
+```{r}
+# Uses defaults as provided. See npv.R for more details.
+npv_sensitivity <- npv(sensitivity_data) 
+```
+# Results
 
+## Yeild Results
 
-```{r gen-plot}
+```{r gen-plot-yeild}
 # Plot the anomaly yield per P2 rate
-ggplot()+
-  geom_jitter(data=sensitivity_data,color="#1F778D", aes(x=as.factor(year), y=yeild),alpha=0.5)+
-  geom_boxplot(data=sensitivity_data,alpha=0.8,color="#0F3741",size=.5, notchwidth=1, aes(x=as.factor(year), y=yeild))+
-  labs(title = "Annual range of almond yeild anomolies",
+ggplot() +
+  geom_jitter(
+    data = sensitivity_data,
+    color = "#1F778D",
+    aes(x = as.factor(year), y = yeild),
+    alpha = 0.5
+  ) +
+  geom_boxplot(
+    data = sensitivity_data,
+    alpha = 0.8,
+    color = "#0F3741",
+    size = .5,
+    notchwidth = 1,
+    aes(x = as.factor(year), y = yeild)
+  ) +
+  labs(
+    title = "Annual range of almond yeild anomolies",
     subtitle = "Sensitivity analysis of quadratic precipitation coefficient",
     caption = "",
     x = "Year",
     y = "Yeild Anomoly",
-    col = "") + 
-  theme_minimal() +  
-  # This centers our title and subtitle  
-  theme(plot.title = element_text(hjust= 0.5),
-        plot.subtitle = element_text(hjust= 0.5))
+    col = ""
+  ) +
+  theme_minimal() +
+  # This centers our title and subtitle
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 90))
 
 ```
 
-```{r}
-npv_sensitivity <- npv(sensitivity_data) 
-```
+## NPV Results
 
 
-```{r gen-plot}
+```{r gen-plot-npv}
 # Plot the anomaly NPV per P2 rate
-ggplot()+
-  geom_jitter(data=npv_sensitivity,color="#175935", aes(x=as.factor(year), y=npv),alpha=0.25)+
-  geom_boxplot(data=npv_sensitivity,alpha=0.8,color="#092516",size=.5, notchwidth=1,aes(x=as.factor(year), y=npv))+
-  labs(title = "Annual range of net present value",
+ggplot() +
+  geom_jitter(
+    data = npv_sensitivity,
+    color = "#175935",
+    aes(x = as.factor(year), y = npv),
+    alpha = 0.25
+  ) +
+  geom_boxplot(
+    data = npv_sensitivity,
+    alpha = 0.8,
+    color = "#092516",
+    size = .5,
+    notchwidth = 1,
+    aes(x = as.factor(year), y = npv)
+  ) +
+  labs(
+    title = "Annual range of net present value",
     subtitle = "Sensitivity analysis of quadratic precipitation coefficient",
     caption = "",
     x = "Year",
     y = "NPV ($)",
-    col = "") + 
-  scale_y_continuous(labels = scales::dollar_format())+
-  theme_minimal() +  
-  # This centers our title and subtitle  
-  theme(plot.title = element_text(hjust= 0.5),
-        plot.subtitle = element_text(hjust= 0.5))
+    col = ""
+  ) +
+  scale_y_continuous(labels = scales::dollar_format()) +
+  theme_minimal() +
+  # This centers our title and subtitle
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 90))
 
 ```
+
+# Discussion
