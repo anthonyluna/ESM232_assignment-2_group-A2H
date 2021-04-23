@@ -1,0 +1,44 @@
+---
+title: "Assignment 4"
+author: "Anthony Luna, Atefeh Mohseni, Rich Viebrock"
+date: "4/22/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE,warning = FALSE)
+```
+
+```{r import}
+library(tidyverse)
+library(here)
+
+#Warp the anomaly yield model to get mean and inter-annual variation of the yield anomaly
+source(here("R","new_almond_model.R"))
+
+# read the climate data of interest
+input_data=read.table("data/clim.txt", header=TRUE)
+
+# use clim variable to refer to clim.txt data
+clim = input_data
+
+
+```
+
+## Perform a Latin Hypercube (LHR) sensitivity analysis on precipitation coefficients
+```{r import}
+#run the sensitivity analysis on 2 coefficients of precipitation
+factors = c("Pcoeff1","Pcoeff2")
+
+# assume these P coefficients have uniform distribution
+q = c("qunif", "qunif")
+
+# set the min,max for uniform distribution
+
+```
+
+
+# Results
+
+
+# Discussion
