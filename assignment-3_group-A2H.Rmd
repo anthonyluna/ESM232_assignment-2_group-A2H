@@ -1,0 +1,124 @@
+---
+title: "Assignment 3"
+author: "Anthony Luna, Atefeh Mohseni, Rich Viebrock"
+date: "4/20/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE,warning = FALSE)
+```
+
+```{r import}
+library(tidyverse)
+library(here)
+
+source(here("R","almond_model.R"))
+source(here("R","npv.R"))
+```
+
+## Generate Sensitivity Data
+
+```{r gen-data}
+# define general variables
+
+number_runs = 500
+
+# define the path to the climate data of interest
+clim_data_path <- here("data","clim.txt")
+
+# Generate 0.0043 parameter rates
+almond_yield_model_res = rnorm(mean=0.0043, sd=0.001, n=number_runs)
+
+# Generate the yeild outcomes for each change of k2
+sensitivity_data <- 
+  # First pipe the random k2 values into the map_dfr function
+  almond_yield_model_res %>% 
+  
+  map_dfr(
+    # run the almond model, replacing the random values for k2
+    ~almond_model(clim_data=clim_data_path,k4=.x) %>% 
+      # add the k2 value as a column to the dataframe
+      mutate(k2=.x))
+```
+## Translate to NPV
+
+```{r}
+# Uses defaults as provided. See npv.R for more details.
+npv_sensitivity <- npv(sensitivity_data) 
+```
+# Results
+
+## Yeild Results
+
+```{r gen-plot-yeild}
+# Plot the anomaly yield per P2 rate
+ggplot() +
+  geom_jitter(
+    data = sensitivity_data,
+    color = "#1F778D",
+    aes(x = as.factor(year), y = yeild),
+    alpha = 0.5
+  ) +
+  geom_boxplot(
+    data = sensitivity_data,
+    alpha = 0.8,
+    color = "#0F3741",
+    size = .5,
+    notchwidth = 1,
+    aes(x = as.factor(year), y = yeild)
+  ) +
+  labs(
+    title = "Annual range of almond yeild anomolies",
+    subtitle = "Sensitivity analysis of quadratic precipitation coefficient",
+    caption = "",
+    x = "Year",
+    y = "Yeild Anomoly",
+    col = ""
+  ) +
+  theme_minimal() +
+  # This centers our title and subtitle
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 90))
+
+```
+
+## NPV Results
+
+
+```{r gen-plot-npv}
+# Plot the anomaly NPV per P2 rate
+ggplot() +
+  geom_jitter(
+    data = npv_sensitivity,
+    color = "#175935",
+    aes(x = as.factor(year), y = npv),
+    alpha = 0.25
+  ) +
+  geom_boxplot(
+    data = npv_sensitivity,
+    alpha = 0.8,
+    color = "#092516",
+    size = .5,
+    notchwidth = 1,
+    aes(x = as.factor(year), y = npv)
+  ) +
+  labs(
+    title = "Annual range of net present value",
+    subtitle = "Sensitivity analysis of quadratic precipitation coefficient",
+    caption = "",
+    x = "Year",
+    y = "NPV ($)",
+    col = ""
+  ) +
+  scale_y_continuous(labels = scales::dollar_format()) +
+  theme_minimal() +
+  # This centers our title and subtitle
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5),
+        axis.text.x = element_text(angle = 90))
+
+```
+
+# Discussion
